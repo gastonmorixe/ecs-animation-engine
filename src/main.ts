@@ -733,7 +733,7 @@ anchorEntity.addComponent(new ForceComponent()); // Force acting on the anchor p
 anchorEntity.addComponent(new AccumulatedForceComponent()); // Force acting on the anchor point
 // Add spring force to the entity, attached between box and anchor
 boxEntity.addComponent(
-  new SpringForceComponent(boxEntity, anchorEntity, 0.5, 0.05),
+  new SpringForceComponent(boxEntity, anchorEntity, 0.2, 0.05),
 );
 
 // Set up the movement system (handles physics and movement)
@@ -763,8 +763,8 @@ engine.addEntity(boxEntity);
 // Add systems to the engine
 engine.addSystem(springForceSystem);
 engine.addSystem(frictionSystem);
-engine.addSystem(movementSystem);
 engine.addSystem(mouseForceSystem);
+engine.addSystem(movementSystem);
 engine.addSystem(domUpdateSystem);
 
 // Initialize the chart system
