@@ -639,14 +639,14 @@ class ChartSystem extends System {
 class DOMMouseDragHandler {
   initializeDragListeners(entity: Entity) {
     const domComponent = entity.getComponent(DOMComponent);
-    const mouseDrag = entity.getComponent(MouseDragComponent);
+    const mouseDrag = entity.getComponent(MouseDragForceComponent);
     const position = entity.getComponent(PositionComponent);
 
     if (!domComponent || !mouseDrag || !position) return;
 
     const domElement = domComponent.domElement;
 
-    // Attach the necessary event listeners
+    // Attach mouse event listeners
     domElement.addEventListener("mousedown", (event) =>
       this.onMouseDown(event, mouseDrag, position, domElement),
     );
@@ -656,35 +656,31 @@ class DOMMouseDragHandler {
     window.addEventListener("mouseup", () =>
       this.onMouseUp(mouseDrag, domElement),
     );
+
+    // Attach touch event listeners
+    domElement.addEventListener("touchstart", (event) =>
+      this.onTouchStart(event, mouseDrag, position, domElement),
+    );
+    window.addEventListener("touchmove", (event) =>
+      this.onTouchMove(event, mouseDrag),
+    );
+    window.addEventListener("touchend", () =>
+      this.onTouchEnd(mouseDrag, domElement),
+    );
   }
 
   onMouseDown(
     event: MouseEvent,
-    mouseDragComponent: MouseDragComponent,
+    mouseDragComponent: MouseDragForceComponent,
     position: PositionComponent,
     element: HTMLElement,
   ) {
     element.classList.add("dragging");
 
-    // Calculate the offset between the mouse position and the top-left corner of the bo
-
+    // Calculate the offset between the mouse position and the top-left corner of the box
     const offsetX = event.clientX - position.x;
     const offsetY = event.clientY - position.y;
 
-    // console.log(
-    //   "offsetX",
-    //   offsetX,
-    //   "offsetY",
-    //   offsetY,
-    //   "position.x",
-    //   position.x,
-    //   "position.y",
-    //   position.y,
-    //   "clientX",
-    //   event.clientX,
-    //   "clientY",
-    //   event.clientY,
-    // );
     mouseDragComponent.startDrag(offsetX, offsetY);
     mouseDragComponent.setTarget(
       event.clientX - mouseDragComponent.offsetX,
@@ -692,7 +688,7 @@ class DOMMouseDragHandler {
     ); // Set initial target
   }
 
-  onMouseMove(event: MouseEvent, mouseDragComponent: MouseDragComponent) {
+  onMouseMove(event: MouseEvent, mouseDragComponent: MouseDragForceComponent) {
     if (mouseDragComponent.isDragging) {
       // Update the target, accounting for the initial offset
       mouseDragComponent.setTarget(
@@ -702,7 +698,48 @@ class DOMMouseDragHandler {
     }
   }
 
-  onMouseUp(mouseDragComponent: MouseDragComponent, element: HTMLElement) {
+  onMouseUp(mouseDragComponent: MouseDragForceComponent, element: HTMLElement) {
+    element.classList.remove("dragging");
+    mouseDragComponent.stopDrag();
+  }
+
+  // Touch event equivalents
+  onTouchStart(
+    event: TouchEvent,
+    mouseDragComponent: MouseDragForceComponent,
+    position: PositionComponent,
+    element: HTMLElement,
+  ) {
+    event.preventDefault(); // Prevent scrolling
+
+    const touch = event.touches[0]; // Get the first touch point
+    element.classList.add("dragging");
+
+    // Calculate the offset between the touch position and the top-left corner of the box
+    const offsetX = touch.clientX - position.x;
+    const offsetY = touch.clientY - position.y;
+
+    mouseDragComponent.startDrag(offsetX, offsetY);
+    mouseDragComponent.setTarget(
+      touch.clientX - mouseDragComponent.offsetX,
+      touch.clientY - mouseDragComponent.offsetY,
+    ); // Set initial target
+  }
+
+  onTouchMove(event: TouchEvent, mouseDragComponent: MouseDragForceComponent) {
+    if (mouseDragComponent.isDragging) {
+      event.preventDefault(); // Prevent scrolling
+      const touch = event.touches[0]; // Get the first touch point
+
+      // Update the target, accounting for the initial offset
+      mouseDragComponent.setTarget(
+        touch.clientX - mouseDragComponent.offsetX,
+        touch.clientY - mouseDragComponent.offsetY,
+      );
+    }
+  }
+
+  onTouchEnd(mouseDragComponent: MouseDragForceComponent, element: HTMLElement) {
     element.classList.remove("dragging");
     mouseDragComponent.stopDrag();
   }
