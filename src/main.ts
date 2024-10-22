@@ -639,9 +639,9 @@ class ChartSystem extends System {
 class DOMMouseDragHandler {
   initializeDragListeners(entity: Entity) {
     const domComponent = entity.getComponent(DOMComponent);
-    const mouseDrag = entity.getComponent(MouseDragForceComponent);
+    const mouseDrag = entity.getComponent(MouseDragComponent);
     const position = entity.getComponent(PositionComponent);
-
+    
     if (!domComponent || !mouseDrag || !position) return;
 
     const domElement = domComponent.domElement;
@@ -671,7 +671,7 @@ class DOMMouseDragHandler {
 
   onMouseDown(
     event: MouseEvent,
-    mouseDragComponent: MouseDragForceComponent,
+    mouseDragComponent: MouseDragComponent,
     position: PositionComponent,
     element: HTMLElement,
   ) {
@@ -688,7 +688,7 @@ class DOMMouseDragHandler {
     ); // Set initial target
   }
 
-  onMouseMove(event: MouseEvent, mouseDragComponent: MouseDragForceComponent) {
+  onMouseMove(event: MouseEvent, mouseDragComponent: MouseDragComponent) {
     if (mouseDragComponent.isDragging) {
       // Update the target, accounting for the initial offset
       mouseDragComponent.setTarget(
@@ -698,7 +698,7 @@ class DOMMouseDragHandler {
     }
   }
 
-  onMouseUp(mouseDragComponent: MouseDragForceComponent, element: HTMLElement) {
+  onMouseUp(mouseDragComponent: MouseDragComponent, element: HTMLElement) {
     element.classList.remove("dragging");
     mouseDragComponent.stopDrag();
   }
@@ -706,7 +706,7 @@ class DOMMouseDragHandler {
   // Touch event equivalents
   onTouchStart(
     event: TouchEvent,
-    mouseDragComponent: MouseDragForceComponent,
+    mouseDragComponent: MouseDragComponent,
     position: PositionComponent,
     element: HTMLElement,
   ) {
@@ -726,7 +726,7 @@ class DOMMouseDragHandler {
     ); // Set initial target
   }
 
-  onTouchMove(event: TouchEvent, mouseDragComponent: MouseDragForceComponent) {
+  onTouchMove(event: TouchEvent, mouseDragComponent: MouseDragComponent) {
     if (mouseDragComponent.isDragging) {
       event.preventDefault(); // Prevent scrolling
       const touch = event.touches[0]; // Get the first touch point
@@ -739,7 +739,7 @@ class DOMMouseDragHandler {
     }
   }
 
-  onTouchEnd(mouseDragComponent: MouseDragForceComponent, element: HTMLElement) {
+  onTouchEnd(mouseDragComponent: MouseDragComponent, element: HTMLElement) {
     element.classList.remove("dragging");
     mouseDragComponent.stopDrag();
   }
