@@ -1,0 +1,51 @@
+name: Build and Deploy Static Page
+
+on:
+  # Trigger on manual run, push to main, or pull request to main
+  workflow_dispatch:  # Manual trigger
+  push:
+    branches:
+      - main         # Trigger on push to the main branch
+  pull_request:
+    branches:
+      - main         # Trigger on PRs to the main branch
+
+jobs:
+  build:
+    name: Build static page
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4  # Checkout code
+      - uses: oven-sh/setup-bun@v2 # Set up Bun
+
+      - run: bun install            # Install dependencies
+      - run: bun run build          # Build the static site
+
+      # Upload the build output as an artifact for GitHub Pages deployment
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3  # Use the official upload-pages-artifact action
+        with:
+          path: ./build             # Path to the build output (adjust this as per your setup)
+          name: github-pages        # Artifact name (must be 'github-pages')
+          retention-days: 1         # Optional: Artifact retention time, default is 1 day
+
+  deploy:
+    name: Deploy to GitHub Pages
+    needs: build                    # Ensure deployment happens after the build job
+    runs-on: ubuntu-latest
+
+    permissions:
+      pages: write      # Required permission for GitHub Pages deployment
+      id-token: write   # Permission to verify the deployment origin
+
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4  # Use the correct version of the deploy-pages action
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}  # GitHub token for authentication
