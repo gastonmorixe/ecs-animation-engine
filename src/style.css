@@ -13,8 +13,9 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
-#box {
-  background-color: blue;
+.box {
+  --bg-color: blue;
+  background-color: var(--bg-color);
   width: 100px;
   height: 100px;
   position: absolute;
@@ -22,10 +23,28 @@
   left: 0;
   display: flex;
   flex-direction: column;
+  user-select: none;
   cursor: grab;
+  z-index: 1;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0);
+  transition: box-shadow 0.2s ease;
+  border-radius: 10px;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  font-weight: 600;
   &.dragging {
     cursor: grabbing;
+    box-shadow: 0 15px 15px rgba(0, 0, 0, 0.15);
   }
+}
+
+#box2 {
+  --bg-color: red;
+}
+
+#box3 {
+  --bg-color: green;
 }
 
 #chart {
