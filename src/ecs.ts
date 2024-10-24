@@ -35,5 +35,10 @@ export abstract class Component {
 }
 
 export abstract class System {
+  // Optional method. Prepare is called only once before the render loop
+  prepare?(entities: Entity[]): unknown;
+
+  // Render loop. Called om every frame. 
+  // Abstract method, must be implemented by subclasses
   abstract update(entities: Entity[]): unknown;
 }
