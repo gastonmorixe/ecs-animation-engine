@@ -20,14 +20,19 @@ export class MouseForceSystem extends System {
       const position = entity.getComponent(PositionComponent);
       const velocity = entity.getComponent(VelocityComponent);
       const force = entity.getComponent(ForceComponent);
-      const mouseDragForce = entity.getComponent(MouseDragComponent);
+      const mouseDrag = entity.getComponent(MouseDragComponent);
 
+      // TODO: Move this to init. Make Engine/System call init on all systems
+      if (mouseDrag && !mouseDrag.dragHandler) {
+        mouseDrag.dragHandler = new DragHandler(entity);
+      }
+      
       if (
         position &&
         velocity &&
         force &&
-        mouseDragForce &&
-        mouseDragForce.isDragging
+        mouseDrag &&
+        mouseDrag.isDragging
       ) {
         // console.log(
         //   "[MouseForceSystem]",
@@ -38,8 +43,8 @@ export class MouseForceSystem extends System {
         //     mouseDrag,
         //   }),
         // );
-        const dx = mouseDragForce.targetX - position.x;
-        const dy = mouseDragForce.targetY - position.y;
+        const dx = mouseDrag.targetX - position.x;
+        const dy = mouseDrag.targetY - position.y;
 
         // Apply force proportional to the distance (like a spring)
         const fx = this.dragStrength * dx - this.damping * velocity.vx;
@@ -64,7 +69,8 @@ export class MouseDragComponent extends Component {
   targetY: number = 0;
   offsetX: number = 0; // Offset from the mouse click to the box's position
   offsetY: number = 0;
-
+  dragHandler?: DragHandler;
+  
   setTarget(x: number, y: number) {
     this.targetX = x;
     this.targetY = y;
@@ -99,6 +105,7 @@ export class DOMUpdateSystem extends System {
 
       if (position && domComponent) {
         const domElement = domComponent.domElement;
+        // TODO: Update only if it changed
         if (domElement) {
           domElement.style.transform = `translate(${position.x}px, ${position.y}px)`;
         }
@@ -107,7 +114,12 @@ export class DOMUpdateSystem extends System {
   }
 }
 
-export class DOMMouseDragHandler {
+export class DragHandler {
+  constructor(entity: Entity) {
+    // super();
+    this.initializeDragListeners(entity);
+  }
+  
   initializeDragListeners(entity: Entity) {
     const domComponent = entity.getComponent(DOMComponent);
     const mouseDrag = entity.getComponent(MouseDragComponent);
