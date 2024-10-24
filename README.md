@@ -19,12 +19,102 @@ The engine provides an efficient way to simulate and visualize complex systems w
 - **Mouse Interaction**: Drag and release entities with realistic forces applied, such as spring pullback and friction.
 - **Chart Visualization**: Real-time visualization of entity properties (position, velocity, and force) using Chart.js, allowing you to observe the effect of forces over time.
 
+### Usage 
+
+Check `src/main.ts` 
+
+```ts
+// Engine
+import { AnimationEngine } from "./engine";
+
+// ECS - Core
+import { MovementSystem, FrictionSystem } from "./systems";
+import { BoxEntity, AnchorEntity } from "./entities";
+
+// Specialized Systems and Entities
+import { MouseForceSystem, DOMUpdateSystem } from "./dom";
+import { SpringEntity, SpringPhysicsSystem } from "./spring";
+import { ChartSystem } from "./chart";
+
+//
+// -- Entities --
+//
+
+// Create the box entity
+const boxElement = document.getElementById("box1") as HTMLElement;
+const boxEntity = new BoxEntity(boxElement, { x: 100, y: 100 }, "box1");
+
+// Creating a fixed anchor
+const anchorEntity = new AnchorEntity({ x: 100, y: 100 }, "anchor");
+
+// Create a spring entity that connects box1 and anchor
+const springEntity = new SpringEntity(boxEntity, anchorEntity, 0.2, 0.05, 1.0);
+
+// Create second box entity
+const boxElement2 = document.getElementById("box2") as HTMLElement;
+const boxEntity2 = new BoxEntity(boxElement2, { x: 250, y: 100 }, "box2");
+
+// Creating the spring force connecting box and box2
+const springEntity2 = new SpringEntity(boxEntity, boxEntity2, 0.2, 0.05, 2.0);
+
+// Create third box entity
+const boxElement3 = document.getElementById("box3") as HTMLElement;
+const boxEntity3 = new BoxEntity(boxElement3, { x: 400, y: 100 }, "box3");
+
+// Creating the spring force connecting box2 and box3
+const springEntity3 = new SpringEntity(boxEntity2, boxEntity3, 0.1, 0.05, 1.0);
+
+//
+// --- Systems ---
+//
+
+// Set up the movement system (handles physics and movement)
+const movementSystem = new MovementSystem();
+
+// Creating the friction component and system
+const frictionSystem = new FrictionSystem();
+
+// Spring physics system
+const springPhysicsSystem = new SpringPhysicsSystem();
+
+// Set up the mouse force system (handles the spring-like dragging effect)
+const mouseForceSystem = new MouseForceSystem(0.2, 0.1); // Drag strength and damping
+
+// Set up the DOM update system (handles syncing the DOM with the entity position)
+const domUpdateSystem = new DOMUpdateSystem();
+
+//
+// -- Engine --
+//
+
+// Create the ECS engine
+const engine = new AnimationEngine();
+
+// Add Entities to the engine
+engine.addEntity(anchorEntity);
+engine.addEntity(boxEntity);
+engine.addEntity(boxEntity2);
+engine.addEntity(boxEntity3);
+engine.addEntity(springEntity);
+engine.addEntity(springEntity2);
+engine.addEntity(springEntity3);
+
+// Add systems to the engine
+engine.addSystem(springPhysicsSystem);
+engine.addSystem(frictionSystem);
+engine.addSystem(mouseForceSystem);
+engine.addSystem(movementSystem);
+engine.addSystem(domUpdateSystem);
+
+// Start the engine
+engine.start();
+```
+
 ### Getting Started
 
 #### Prerequisites
 
-- **Node.js** (v12 or higher)
-- **npm** (v6 or higher)
+- **Bun**
 
 #### Installation
 
