@@ -34,7 +34,6 @@ import { BoxEntity, AnchorEntity } from "./entities";
 // Specialized Systems and Entities
 import { MouseForceSystem, DOMUpdateSystem } from "./dom";
 import { SpringEntity, SpringPhysicsSystem } from "./spring";
-import { ChartSystem } from "./chart";
 
 //
 // -- Entities --
