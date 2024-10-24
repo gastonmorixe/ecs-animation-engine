@@ -15,17 +15,23 @@ export class MouseForceSystem extends System {
     this.damping = damping;
   }
 
-  update(entities: Entity[]) {
+  prepare(entities: Entity[]) {
     entities.forEach((entity) => {
-      const position = entity.getComponent(PositionComponent);
-      const velocity = entity.getComponent(VelocityComponent);
-      const force = entity.getComponent(ForceComponent);
       const mouseDrag = entity.getComponent(MouseDragComponent);
 
       // TODO: Move this to init. Make Engine/System call init on all systems
       if (mouseDrag && !mouseDrag.dragHandler) {
         mouseDrag.dragHandler = new DragHandler(entity);
       }
+    });
+  }
+
+  update(entities: Entity[]) {
+    entities.forEach((entity) => {
+      const position = entity.getComponent(PositionComponent);
+      const velocity = entity.getComponent(VelocityComponent);
+      const force = entity.getComponent(ForceComponent);
+      const mouseDrag = entity.getComponent(MouseDragComponent);
       
       if (
         position &&
