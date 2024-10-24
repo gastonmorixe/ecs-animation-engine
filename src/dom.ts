@@ -116,7 +116,7 @@ export class DOMUpdateSystem extends System {
 
 export class DragHandler {
   constructor(entity: Entity) {
-    super();
+    // super();
     this.initializeDragListeners(entity);
   }
   
