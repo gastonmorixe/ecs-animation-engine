@@ -91,27 +91,14 @@ export class DOMComponent extends Component {
 }
 
 export class DOMUpdateSystem extends System {
-  private domLinks: Map<number, HTMLElement> = new Map();
-
-  // Link an entity with a DOM element
-  linkEntityToDOM(entity: Entity, domElement: HTMLElement) {
-    this.domLinks.set(entity.id, domElement);
-  }
-
   // Update the DOM element positions based on the entity's position component
   update(entities: Entity[]) {
     entities.forEach((entity) => {
-      // const position = entity.getComponent(PositionComponent);
-      // if (position && this.domLinks.has(entity.id)) {
-      //   const domElement = this.domLinks.get(entity.id);
-      //   if (domElement) {
-      //     domElement.style.left = `${position.x}px`;
-      //     domElement.style.top = `${position.y}px`;
-      //   }
-      // }
       const position = entity.getComponent(PositionComponent);
-      if (position && this.domLinks.has(entity.id)) {
-        const domElement = this.domLinks.get(entity.id);
+      const domComponent = entity.getComponent(DOMComponent);
+
+      if (position && domComponent) {
+        const domElement = domComponent.domElement;
         if (domElement) {
           domElement.style.transform = `translate(${position.x}px, ${position.y}px)`;
         }

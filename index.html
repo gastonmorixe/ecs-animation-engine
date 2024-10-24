@@ -2,14 +2,29 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Motion</title>
+    <meta name="viewport" content="width=900, initial-scale=1.0" />
+    <title>Entity Component System Animation Engine - Gaston Morixe</title>
   </head>
   <body>
+    <main>
+      <h1>Entity Component System (ECS)</h1>
+      <h2>Physics Animation Engine (WIP)</h2>
+      <p>
+        by <a href="http://gastonmorixe.com">Gaston Morixe</a> 2024
+        <a
+          href="https://github.com/gastonmorixe/ecs-animation-engine"
+          target="_blank"
+          >Github Repo</a
+        >
+        - MIT
+      </p>
+    </main>
     <div id="box1" class="box">1</div>
     <div id="box2" class="box">2</div>
     <div id="box3" class="box">3</div>
-    <canvas id="chart"></canvas>
+    <div id="chart-container">
+      <canvas id="chart"></canvas>
+    </div>
     <script type="module" src="/src/main.ts"></script>
   </body>
 </html>

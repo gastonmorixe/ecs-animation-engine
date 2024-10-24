@@ -4,96 +4,48 @@ import "./style.css";
 import { AnimationEngine } from "./engine";
 
 // ECS
-import { Entity } from "./ecs";
-import {
-  PositionComponent,
-  VelocityComponent,
-  MassComponent,
-  ForceComponent,
-  AccumulatedForceComponent,
-  FrictionComponent,
-} from "./components";
 import { MovementSystem, FrictionSystem } from "./systems";
 
-// Specific Components and Systems
-import {
-  MouseDragComponent,
-  MouseForceSystem,
-  DOMComponent,
-  DOMUpdateSystem,
-  DOMMouseDragHandler,
-} from "./dom";
+// Specialized Systems and Entities
+import { MouseForceSystem, DOMUpdateSystem, DOMMouseDragHandler } from "./dom";
+import { BoxEntity, AnchorEntity } from "./entities";
 import { SpringEntity, SpringPhysicsSystem } from "./spring";
 import { ChartSystem } from "./chart";
 
 //
-// Application Logic
+// -- Entities --
 //
 
-// Create the ECS engine
-const engine = new AnimationEngine();
-
 // Create the box entity
-const boxEntity = new Entity();
-boxEntity.name = "box1";
-boxEntity.addComponent(new PositionComponent(100, 100)); // Initial position
-boxEntity.addComponent(new VelocityComponent(0, 0)); // Initial velocity
-boxEntity.addComponent(new MassComponent(1)); // Mass of the entity
-boxEntity.addComponent(new ForceComponent()); // Force acting on the entity
-boxEntity.addComponent(new AccumulatedForceComponent()); // Force acting on the entity TODO: may not be needed
-boxEntity.addComponent(new MouseDragComponent()); // Component for mouse dragging
-boxEntity.addComponent(new FrictionComponent(0.05));
-
 const boxElement = document.getElementById("box1") as HTMLElement;
-boxEntity.addComponent(new DOMComponent(boxElement));
+const boxEntity = new BoxEntity(boxElement, { x: 100, y: 100 }, "box1");
 
-// Creating the spring force
-const anchorEntity = new Entity();
-anchorEntity.name = "anchor";
-anchorEntity.addComponent(new PositionComponent(100, 100)); // Fixed point for the spring
-anchorEntity.addComponent(new VelocityComponent(0, 0)); // Initial velocity of the anchor point
-anchorEntity.addComponent(new ForceComponent()); // Force acting on the anchor point
-anchorEntity.addComponent(new AccumulatedForceComponent()); // Force acting on the anchor point
+// Creating a fixed anchor
+const anchorEntity = new AnchorEntity({ x: 100, y: 100 }, "anchor");
 
-// Create a spring entity that connects entityA and entityB
+// Create a spring entity that connects box1 and anchor
 const springEntity = new SpringEntity(boxEntity, anchorEntity, 0.2, 0.05, 1.0);
 springEntity.name = "spring";
 
 // Create second box entity
-const boxEntity2 = new Entity();
-boxEntity2.name = "box2";
-boxEntity2.addComponent(new PositionComponent(250, 100)); // Initial position
-boxEntity2.addComponent(new VelocityComponent(0, 0)); // Initial velocity
-boxEntity2.addComponent(new MassComponent(1)); // Mass of the entity
-boxEntity2.addComponent(new ForceComponent()); // Force acting on the entity
-boxEntity2.addComponent(new AccumulatedForceComponent()); // Force acting on the entity TODO: may not be needed
-boxEntity2.addComponent(new MouseDragComponent()); // Component for mouse dragging
-boxEntity2.addComponent(new FrictionComponent(0.05));
-
 const boxElement2 = document.getElementById("box2") as HTMLElement;
-boxEntity2.addComponent(new DOMComponent(boxElement2));
+const boxEntity2 = new BoxEntity(boxElement2, { x: 250, y: 100 }, "box2");
 
 // Creating the spring force connecting box and box2
 const springEntity2 = new SpringEntity(boxEntity, boxEntity2, 0.2, 0.05, 2.0);
 springEntity2.name = "spring2";
 
 // Create third box entity
-const boxEntity3 = new Entity();
-boxEntity3.name = "box3";
-boxEntity3.addComponent(new PositionComponent(400, 100)); // Initial position
-boxEntity3.addComponent(new VelocityComponent(0, 0)); // Initial velocity
-boxEntity3.addComponent(new MassComponent(1)); // Mass of the entity
-boxEntity3.addComponent(new ForceComponent()); // Force acting on the entity
-boxEntity3.addComponent(new AccumulatedForceComponent()); // Force acting on the entity
-boxEntity3.addComponent(new MouseDragComponent()); // Component for mouse dragging
-boxEntity3.addComponent(new FrictionComponent(0.05));
-
 const boxElement3 = document.getElementById("box3") as HTMLElement;
-boxEntity3.addComponent(new DOMComponent(boxElement3));
+const boxEntity3 = new BoxEntity(boxElement3, { x: 400, y: 100 }, "box3");
 
 // Creating the spring force connecting box2 and box3
 const springEntity3 = new SpringEntity(boxEntity2, boxEntity3, 0.1, 0.05, 1.0);
 springEntity3.name = "spring3";
+
+//
+// --- Systems ---
+//
 
 // Set up the movement system (handles physics and movement)
 const movementSystem = new MovementSystem();
@@ -109,9 +61,6 @@ const mouseForceSystem = new MouseForceSystem(0.2, 0.1); // Drag strength and da
 
 // Set up the DOM update system (handles syncing the DOM with the entity position)
 const domUpdateSystem = new DOMUpdateSystem();
-domUpdateSystem.linkEntityToDOM(boxEntity, boxElement);
-domUpdateSystem.linkEntityToDOM(boxEntity2, boxElement2);
-domUpdateSystem.linkEntityToDOM(boxEntity3, boxElement3);
 
 // Set up the DOM mouse drag handler to handle mouse events via the DOM component
 const domMouseDragHandler = new DOMMouseDragHandler();
@@ -122,6 +71,13 @@ domMouseDragHandler2.initializeDragListeners(boxEntity2);
 
 const domMouseDragHandler3 = new DOMMouseDragHandler();
 domMouseDragHandler3.initializeDragListeners(boxEntity3);
+
+//
+// -- Engine --
+//
+
+// Create the ECS engine
+const engine = new AnimationEngine();
 
 // Add Entities to the engine
 engine.addEntity(anchorEntity);
