@@ -10,9 +10,18 @@ export class AnimationEngine {
 
   addSystem(system: System) {
     this.systems.push(system);
-  }
+  }     
 
-  update() {
+  private prepare() {
+    // Prepare all systems
+    this.systems.forEach((system) => { 
+      if(system.prepare) {
+        system.prepare(this.entities);
+      }
+    });   
+  }
+  
+  private update() {
     // let anyActive = false;
 
     // Update all systems, but only for active entities
@@ -61,6 +70,7 @@ export class AnimationEngine {
 
   // Start the loop on initialization
   start() {
+    this.prepare();
     this.loop();
   }
 }
