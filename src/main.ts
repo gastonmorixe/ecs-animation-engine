@@ -62,16 +62,6 @@ const mouseForceSystem = new MouseForceSystem(0.2, 0.1); // Drag strength and da
 // Set up the DOM update system (handles syncing the DOM with the entity position)
 const domUpdateSystem = new DOMUpdateSystem();
 
-// Set up the DOM mouse drag handler to handle mouse events via the DOM component
-const domMouseDragHandler = new DOMMouseDragHandler();
-domMouseDragHandler.initializeDragListeners(boxEntity);
-
-const domMouseDragHandler2 = new DOMMouseDragHandler();
-domMouseDragHandler2.initializeDragListeners(boxEntity2);
-
-const domMouseDragHandler3 = new DOMMouseDragHandler();
-domMouseDragHandler3.initializeDragListeners(boxEntity3);
-
 //
 // -- Engine --
 //
